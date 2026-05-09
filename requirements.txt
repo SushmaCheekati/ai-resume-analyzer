@@ -2,5 +2,6 @@ Django
 gunicorn
 openai
 PyPDF2
+docx2txt
 python-docx
 whitenoise
