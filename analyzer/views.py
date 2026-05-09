@@ -1,6 +1,7 @@
 from random import random
 
 from django.shortcuts import render
+
 from .forms import ResumeForm
 import PyPDF2
 import docx2txt
