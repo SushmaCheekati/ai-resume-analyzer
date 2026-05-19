@@ -19,6 +19,7 @@
             Register
         </h1>
 
+<<<<<<< HEAD
         {% if error %}
 
             <div class="alert alert-danger auto-hide-message">
@@ -29,11 +30,17 @@
 
         {% endif %}
 
+=======
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
         {% if messages %}
 
             {% for message in messages %}
 
+<<<<<<< HEAD
                 <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% else %}alert-{{ message.tags }}{% endif %} auto-hide-message">
+=======
+                <div class="alert alert-{{ message.tags }} auto-hide-message">
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
 
                     {{ message }}
 

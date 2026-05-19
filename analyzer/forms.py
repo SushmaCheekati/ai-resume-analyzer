@@ -1,11 +1,15 @@
 from django import forms
+<<<<<<< HEAD
 from django.core.exceptions import ValidationError
 import os
+=======
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
 from .models import Resume
 
 class ResumeForm(forms.ModelForm):
     class Meta:
         model = Resume
+<<<<<<< HEAD
         fields = ['name', 'resume_file']
 
     def clean_resume_file(self):
@@ -20,3 +24,6 @@ class ResumeForm(forms.ModelForm):
             if ext not in ['.pdf', '.docx']:
                 raise ValidationError("Only PDF and DOCX files are allowed.")
         return file
+=======
+        fields = ['name', 'resume_file']
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487

@@ -5,27 +5,39 @@ from django.shortcuts import render
 from .forms import ResumeForm
 import PyPDF2
 import docx2txt
+<<<<<<< HEAD
 import pdfplumber
 import docx
+=======
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from .models import Resume
 import re
+<<<<<<< HEAD
 #import spacy
 import json
+=======
+import spacy
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 
+<<<<<<< HEAD
 import google.generativeai as genai
+=======
+from openai import OpenAI
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
 from dotenv import load_dotenv
 import os
 from django.shortcuts import render, redirect
 import re
 from django.contrib import messages
+<<<<<<< HEAD
 import logging
 
 logger = logging.getLogger(__name__)
@@ -46,6 +58,16 @@ else:
 
 
 #nlp = spacy.load("en_core_web_sm")
+=======
+
+load_dotenv()
+
+client = OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY")
+)
+
+nlp = spacy.load("en_core_web_sm")
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
 
 # Skills list
 skills = {
@@ -120,6 +142,7 @@ def upload_resume(request):
             resume.save()
 
             file_path = resume.resume_file.path
+<<<<<<< HEAD
             print(f"\n=========================================\n[DEBUG] 1. STARTING UPLOAD ROUTE\n[DEBUG] File Path: {file_path}")
 
             extracted_text = extract_resume_text(file_path)
@@ -130,10 +153,17 @@ def upload_resume(request):
             print("[DEBUG] 3. CALLING analyze_resume()...")
             result = analyze_resume(extracted_text)
             print(f"[DEBUG] 8. RETURNED FROM analyze_resume(). Final career: {result['career']}")
+=======
+
+            extracted_text = extract_resume_text(file_path)
+
+            result = analyze_resume(extracted_text)
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
 
             info = extract_information(extracted_text)
 
             resume.score = result['score']
+<<<<<<< HEAD
             resume.career = result['career']
             resume.found_skills = ",".join(result['found_skills'])
             resume.missing_skills = ",".join(result['missing_skills'])
@@ -149,6 +179,26 @@ def upload_resume(request):
             resume.certifications = "\n".join(info.get('certifications', [])) if isinstance(info.get('certifications'), list) else (info.get('certifications', '') or '')
             resume.interview_questions = result.get('interview_questions', '') or ''
             resume.ai_feedback = result.get('ai_feedback', '') or ''
+=======
+
+            resume.career = result['career']
+
+            resume.found_skills = ",".join(
+                result['found_skills']
+            )
+
+            resume.missing_skills = ",".join(
+                result['missing_skills']
+            )
+
+            resume.recommendations = " | ".join(
+                result['recommendations']
+            )
+
+            resume.improvements = " | ".join(
+                result['improvements']
+            )
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
 
             resume.save()
 
@@ -170,6 +220,7 @@ def upload_resume(request):
 
 # Function to extract text from resume
 def extract_resume_text(file_path):
+<<<<<<< HEAD
     text = ""
     
     # For PDF files
@@ -299,6 +350,75 @@ def extract_information(text):
         'experience': experience[:4] if experience else ["Not detected"],
         'projects': projects[:4] if projects else ["Not detected"],
         'certifications': certifications[:3] if certifications else ["Not detected"]
+=======
+
+    text = ""
+
+    # For PDF files
+    if file_path.endswith('.pdf'):
+
+        with open(file_path, 'rb') as file:
+
+            pdf_reader = PyPDF2.PdfReader(file)
+
+            for page in pdf_reader.pages:
+
+                extracted = page.extract_text()
+
+                if extracted:
+                    text += extracted
+
+    # For DOCX files
+    elif file_path.endswith('.docx'):
+
+        text = docx2txt.process(file_path)
+
+    return text
+# NLP Information Extraction
+def extract_information(text):
+
+    doc = nlp(text)
+
+    # Email Extraction
+    email = None
+
+    email_match = re.search(r'[\w\.-]+@[\w\.-]+', text)
+
+    if email_match:
+        email = email_match.group(0)
+
+    # Phone Number Extraction
+    phone = None
+
+    phone_match = re.search(r'\+?\d[\d -]{8,12}\d', text)
+
+    if phone_match:
+        phone = phone_match.group(0)
+
+    # Education Extraction
+    education_keywords = [
+        "B.E",
+        "B.Tech",
+        "M.Tech",
+        "Bachelor",
+        "Master",
+        "Computer Science",
+        "Engineering"
+    ]
+
+    education = []
+
+    for word in education_keywords:
+
+        if word.lower() in text.lower():
+
+            education.append(word)
+
+    return {
+        'email': email,
+        'phone': phone,
+        'education': education
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
     }
 
 def generate_interview_questions(found_skills):
@@ -353,6 +473,7 @@ def generate_interview_questions(found_skills):
 
     return questions[:6]
 
+<<<<<<< HEAD
 # Weighted Career Paths & Skills Categorization Dictionary
 SKILL_CATEGORIES_DICT = {
     "Programming Languages": ["python", "javascript", "typescript", "java", "c++", "c#", "ruby", "go", "rust", "php", "swift", "kotlin", "scala", "r", "html", "css", "sql", "bash", "shell"],
@@ -554,6 +675,218 @@ def analyze_resume(text):
         'interview_questions': fallback_questions,
         'questions': fallback_questions,
         'ai_feedback': ai_feedback
+=======
+# Advanced ATS Resume Analysis
+def analyze_resume(text):
+
+    text = text.lower()
+
+    found_skills = []
+
+    score = 0
+
+    # Skill Scoring
+    for skill, weight in skills.items():
+
+        if skill in text:
+
+            found_skills.append(skill)
+
+            score += weight
+
+    # Education Score
+    education_keywords = [
+        "b.tech",
+        "b.e",
+        "m.tech",
+        "computer science",
+        "engineering"
+    ]
+
+    education_found = False
+
+    for edu in education_keywords:
+
+        if edu in text:
+
+            education_found = True
+
+            score += 10
+
+            break
+
+    # Experience Score
+    experience_keywords = [
+        "internship",
+        "experience",
+        "project",
+        "developer"
+    ]
+
+    experience_found = False
+
+    for exp in experience_keywords:
+
+        if exp in text:
+
+            experience_found = True
+
+            score += 10
+
+            break
+
+    # Resume Quality Score
+    if len(text) > 1000:
+
+        score += 10
+
+    # Limit score to 97
+
+    if score > 97:
+
+        score = 97
+
+    # Missing Skills
+    missing_skills = list(
+        set(skills.keys()) - set(found_skills)
+    )
+
+    # Learning Recommendations
+    recommendations = []
+
+    if "python" not in found_skills:
+
+        recommendations.append(
+            "Learn Python programming fundamentals"
+        )
+
+    if "django" not in found_skills:
+
+        recommendations.append(
+            "Build backend projects using Django"
+        )
+
+    if "sql" not in found_skills:
+
+        recommendations.append(
+            "Practice SQL queries and database concepts"
+        )
+
+    if "machine learning" not in found_skills:
+
+        recommendations.append(
+            "Learn Machine Learning with TensorFlow and Scikit-learn"
+        )
+
+    if "javascript" not in found_skills:
+
+        recommendations.append(
+            "Improve frontend skills using JavaScript"
+        )
+
+    # Career Recommendation
+    if "machine learning" in found_skills:
+
+        career = "Machine Learning Engineer"
+
+    elif (
+        "django" in found_skills and
+        "python" in found_skills
+    ):
+
+        career = "Backend Developer"
+
+    elif (
+        "html" in found_skills and
+        "css" in found_skills and
+        "javascript" in found_skills and
+        "python" not in found_skills
+    ):
+
+        career = "Frontend Developer"
+
+    elif (
+        "java" in found_skills and
+        "sql" in found_skills
+    ):
+
+        career = "Software Developer"
+
+    else:
+
+        career = "Software Developer"
+
+    # Resume Improvement Suggestions
+    improvements = []
+
+    if len(found_skills) < 5:
+
+        improvements.append(
+            "Add more technical skills to improve ATS score"
+        )
+
+    if not education_found:
+
+        improvements.append(
+            "Add education details clearly"
+        )
+
+    if not experience_found:
+
+        improvements.append(
+            "Include internships or project experience"
+        )
+
+    if len(text) < 700:
+
+        improvements.append(
+            "Resume content is too short. Add more details"
+        )
+    if "github" not in text:
+
+        improvements.append(
+            "Add GitHub profile link"
+        )
+
+    if "linkedin" not in text:
+
+        improvements.append(
+            "Add LinkedIn profile link"
+        )
+
+    if "certification" not in text:
+
+        improvements.append(
+            "Add certifications to strengthen your resume"
+        )
+    questions = generate_interview_questions(found_skills)
+
+    questions = generate_ai_questions(found_skills)
+    ai_feedback = generate_ai_feedback(text)
+
+    return {
+        'score': score,
+
+        'found_skills': found_skills,
+
+        'missing_skills': missing_skills,
+
+        'career': career,
+
+        'education_found': education_found,
+
+        'experience_found': experience_found,
+
+        'recommendations': recommendations,
+
+        'improvements': improvements,
+
+        'interview_questions': questions,
+
+        'questions': questions,
+
+        'ai_feedback': ai_feedback,
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
     }
 
 # Register View
@@ -673,6 +1006,7 @@ def login_user(request):
 
 # Dashboard View
 @login_required
+<<<<<<< HEAD
 def download_report(request, id=None):
     from django.shortcuts import get_object_or_404
     
@@ -720,6 +1054,82 @@ def download_report(request, id=None):
     response = HttpResponse(content_type='application/pdf')
     filename = f"resume_analysis_{resume.id}.pdf"
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
+=======
+def download_report(request):
+
+    resumes = Resume.objects.filter(
+        user=request.user
+    ).order_by('-uploaded_at')
+
+    if not resumes.exists():
+
+        return HttpResponse("No resume found")
+
+    resume = resumes.first()
+
+    result = {
+
+        'score': resume.score,
+
+        'career': resume.career,
+
+        'found_skills': [
+            'python',
+            'django',
+            'html',
+            'css',
+            'javascript'
+        ],
+
+        'missing_skills': [],
+
+        'recommendations': [
+            "Improve ATS keywords",
+            "Add more projects",
+            "Add certifications"
+        ],
+
+        'improvements': [
+            "Use better formatting",
+            "Add measurable achievements",
+            "Optimize for ATS systems"
+        ],
+
+        'education_found': True,
+
+        'experience_found': True
+    }
+
+    info = {
+
+        'email': 'example@gmail.com',
+
+        'phone': '+91 XXXXX XXXXX',
+
+        'education': ['Bachelor of Engineering']
+    }
+
+    template = get_template(
+        'success.html'
+    )
+
+    html = template.render({
+
+        'result': result,
+
+        'info': info,
+
+        'pdf': True
+    })
+
+    response = HttpResponse(
+        content_type='application/pdf'
+    )
+
+    response['Content-Disposition'] = (
+        'attachment; filename="resume_report.pdf"'
+    )
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
 
     pisa_status = pisa.CreatePDF(
         html,
@@ -727,17 +1137,29 @@ def download_report(request, id=None):
     )
 
     if pisa_status.err:
+<<<<<<< HEAD
         return HttpResponse('Error generating PDF report')
+=======
+
+        return HttpResponse(
+            'Error generating PDF'
+        )
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
 
     return response
 
 @login_required
 def dashboard(request):
+<<<<<<< HEAD
+=======
+
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
     resumes = Resume.objects.filter(
         user=request.user
     ).order_by('-uploaded_at')
 
     latest_resume = resumes.first()
+<<<<<<< HEAD
     total_resumes = resumes.count()
 
     skill_labels = ["Detected Skills", "Missing Skills"]
@@ -834,6 +1256,43 @@ def dashboard(request):
         'ats_breakdown_values': ats_breakdown_values,
         'category_labels': category_labels,
         'category_values': category_values
+=======
+
+    total_resumes = resumes.count()
+
+    skill_labels = []
+
+    skill_counts = []
+
+    if latest_resume:
+
+        skills = [
+            skill.strip()
+            for skill in latest_resume.found_skills.split(',')
+            if skill.strip()
+        ]
+
+        import random
+
+        skill_labels = skills
+
+        for skill in skills:
+
+            skill_counts.append(random.randint(5, 30))
+
+    return render(request, 'dashboard.html', {
+
+        'resumes': resumes,
+
+        'latest_resume': latest_resume,
+
+        'total_resumes': total_resumes,
+
+        'skill_labels': skill_labels,
+
+        'skill_counts': skill_counts
+
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
     })
 def generate_ai_questions(found_skills):
 
@@ -954,6 +1413,7 @@ def delete_resume(request, id):
 
 @login_required
 def view_report(request, id):
+<<<<<<< HEAD
     from django.shortcuts import get_object_or_404
     resume = get_object_or_404(Resume, id=id, user=request.user)
 
@@ -975,6 +1435,39 @@ def view_report(request, id):
         'email': resume.email or "Not detected",
         'phone': resume.phone or "Not detected",
         'education': [e.strip() for e in resume.education.split('\n') if e.strip()] if resume.education else ["Not detected"]
+=======
+
+    resume = Resume.objects.get(id=id)
+
+    result = {
+
+        'score': resume.score,
+
+        'career': resume.career,
+
+        'found_skills': resume.found_skills.split(','),
+
+        'missing_skills': resume.missing_skills.split(','),
+
+        'recommendations': resume.recommendations.split('|'),
+
+        'improvements': resume.improvements.split('|'),
+
+        'education_found': True,
+
+        'experience_found': True,
+
+        'questions': "Previously generated AI questions"
+    }
+
+    info = {
+
+        'email': "Stored Email",
+
+        'phone': "Stored Phone",
+
+        'education': ["Bachelor of Engineering"]
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
     }
 
     return render(
@@ -982,8 +1475,12 @@ def view_report(request, id):
         'success.html',
         {
             'result': result,
+<<<<<<< HEAD
             'info': info,
             'resume': resume
+=======
+            'info': info
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
         }
     )
 

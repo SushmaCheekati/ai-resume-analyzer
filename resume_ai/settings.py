@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+<<<<<<< HEAD
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,15 +21,27 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 load_dotenv(BASE_DIR / 'analyzer' / '.env')
 
+=======
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+<<<<<<< HEAD
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-*#yr63+az8@^!%9_3vr-fg(y=nw6y)zxqpq*66+40tfh8z*5%(')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True').lower() in ['true', '1', 'yes']
+=======
+SECRET_KEY = 'django-insecure-*#yr63+az8@^!%9_3vr-fg(y=nw6y)zxqpq*66+40tfh8z*5%('
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
 
 ALLOWED_HOSTS = ['*']
 

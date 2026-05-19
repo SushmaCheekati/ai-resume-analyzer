@@ -15,7 +15,11 @@ class Resume(models.Model):
 
     score = models.IntegerField(default=0)
 
+<<<<<<< HEAD
     career = models.CharField(max_length=200, default="")
+=======
+    career = models.CharField(max_length=100, default="")
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
 
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
@@ -27,6 +31,7 @@ class Resume(models.Model):
 
     improvements = models.TextField(default="")
 
+<<<<<<< HEAD
     email = models.CharField(max_length=100, default="", blank=True)
 
     phone = models.CharField(max_length=50, default="", blank=True)
@@ -43,6 +48,8 @@ class Resume(models.Model):
 
     ai_feedback = models.TextField(default="", blank=True)
 
+=======
+>>>>>>> 635a5accff9886b6cff2d9131f8795ff9c435487
     def __str__(self):
 
         return self.name
