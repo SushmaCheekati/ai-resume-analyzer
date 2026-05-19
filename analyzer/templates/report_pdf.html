@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Resume Analysis Report</title>
+    <style>
+        @page {
+            size: a4;
+            margin: 2cm;
+        }
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            color: #1e293b;
+            line-height: 1.5;
+            font-size: 10pt;
+        }
+        .header {
+            border-bottom: 2px solid #4f46e5;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        .candidate-name {
+            font-size: 24pt;
+            font-weight: bold;
+            color: #4f46e5;
+            margin: 0 0 5px 0;
+        }
+        .contact-info {
+            font-size: 10pt;
+            color: #64748b;
+        }
+        .section-title {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #1e3a8a;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 5px;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .grid-table td {
+            vertical-align: top;
+            padding: 8px;
+        }
+        .score-box {
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        .score-num {
+            font-size: 36pt;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .score-green { color: #10b981; }
+        .score-yellow { color: #f59e0b; }
+        .score-red { color: #ef4444; }
+        
+        .badge {
+            display: inline-block;
+            background-color: #e2e8f0;
+            color: #334155;
+            padding: 4px 8px;
+            margin: 3px;
+            border-radius: 4px;
+            font-size: 9pt;
+        }
+        .badge-missing {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        ul, ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 6px;
+        }
+        .ai-feedback {
+            background-color: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+        }
+        .footer {
+            margin-top: 40px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 10px;
+            text-align: center;
+            font-size: 8pt;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1 class="candidate-name">{{ info.name }}</h1>
+        <div class="contact-info">
+            Email: {{ info.email }} &nbsp;|&nbsp; Phone: {{ info.phone }} &nbsp;|&nbsp; Date Analyzed: {{ resume.uploaded_at|date:"F d, Y" }}
+        </div>
+    </div>
+
+    <table class="grid-table">
+        <tr>
+            <td style="width: 60%;">
+                <div class="section-title" style="margin-top: 0;">Executive Summary</div>
+                <div class="ai-feedback">
+                    "{{ result.ai_feedback }}"
+                </div>
+                <div style="margin-top: 15px;">
+                    <strong>Recommended Career Path:</strong> 
+                    <span style="font-size: 12pt; font-weight: bold; color: #4f46e5;">{{ result.career }}</span>
+                </div>
+            </td>
+            <td style="width: 40%; padding-left: 20px;">
+                <div class="score-box">
+                    <div style="font-size: 11pt; font-weight: bold; color: #475569;">ATS Resume Score</div>
+                    <div class="score-num {% if result.score >= 80 %}score-green{% elif result.score >= 50 %}score-yellow{% else %}score-red{% endif %}">
+                        {{ result.score }}
+                    </div>
+                    <div style="font-size: 9pt; color: #64748b;">out of 100 points</div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="section-title">Technical Skills Mapping</div>
+    <table class="grid-table">
+        <tr>
+            <td style="width: 50%;">
+                <strong style="color: #0f766e;">Detected Skills:</strong><br/>
+                <div style="margin-top: 8px;">
+                    {% for skill in result.found_skills %}
+                        <span class="badge">{{ skill|title }}</span>
+                    {% empty %}
+                        <span style="color: #64748b; font-style: italic;">No skills detected.</span>
+                    {% endfor %}
+                </div>
+            </td>
+            <td style="width: 50%; padding-left: 15px;">
+                <strong style="color: #991b1b;">Recommended Missing Skills:</strong><br/>
+                <div style="margin-top: 8px;">
+                    {% for skill in result.missing_skills %}
+                        <span class="badge badge-missing">{{ skill|title }}</span>
+                    {% empty %}
+                        <span style="color: #0f766e; font-style: italic;">No missing skills detected!</span>
+                    {% endfor %}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="section-title">Resume Content & Detail Extraction</div>
+    <table class="grid-table">
+        <tr>
+            <td style="width: 50%;">
+                <strong>Education Highlighted:</strong>
+                <ul style="margin-top: 5px;">
+                    {% for edu in info.education %}
+                        <li>{{ edu }}</li>
+                    {% empty %}
+                        <li>Not detected</li>
+                    {% endfor %}
+                </ul>
+            </td>
+            <td style="width: 50%; padding-left: 15px;">
+                <strong>Certifications Detected:</strong>
+                <ul style="margin-top: 5px;">
+                    {% for cert in info.certifications %}
+                        <li>{{ cert }}</li>
+                    {% empty %}
+                        <li>Not detected</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+    </table>
+
+    <div class="section-title">Career Coach Recommendations</div>
+    <table class="grid-table">
+        <tr>
+            <td style="width: 50%;">
+                <strong style="color: #0284c7;">Learning Roadmap:</strong>
+                <ol style="margin-top: 8px;">
+                    {% for rec in result.recommendations %}
+                        <li>{{ rec }}</li>
+                    {% empty %}
+                        <li>Continue building hands-on projects and validating skills.</li>
+                    {% endfor %}
+                </ol>
+            </td>
+            <td style="width: 50%; padding-left: 15px;">
+                <strong style="color: #b45309;">Formatting & ATS Improvements:</strong>
+                <ol style="margin-top: 8px;">
+                    {% for imp in result.improvements %}
+                        <li>{{ imp }}</li>
+                    {% empty %}
+                        <li>Resume layout is optimal. Keep updated!</li>
+                    {% endfor %}
+                </ol>
+            </td>
+        </tr>
+    </table>
+
+    <div style="page-break-before: always;"></div>
+
+    <div class="section-title">Curated Technical Interview Questions</div>
+    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-top: 10px;">
+        <p style="margin-top: 0; color: #475569; font-weight: bold;">
+            Practice these 5 custom-tailored interview questions generated by AI to prepare for your recommended career path as a {{ result.career }}:
+        </p>
+        <pre style="white-space: pre-wrap; font-family: Helvetica, Arial, sans-serif; font-size: 10pt; line-height: 1.6; color: #334155; margin: 0;">{{ result.questions }}</pre>
+    </div>
+
+    <div class="footer">
+        Generated by AI Resume Analyzer and Career Coach &bull; Confidential Assessment
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+# Core Django Framework
+Django==5.2.1
+
+# Environment variable loading
+python-dotenv==1.0.0
+
+# Gemini AI API
+google-generativeai==0.8.3
+
+# Resume File Parsing
+PyPDF2==3.0.1
+docx2txt==0.9
+python-docx==1.2.0
+pdfplumber==0.11.4
+
+# PDF Report Generation
+xhtml2pdf==0.2.17
+reportlab==4.2.2
+
+# Natural Language Processing (Skill extraction)
+#spacy==3.7.6
+
+# Deployment / Production Server
+gunicorn==21.2.0
+whitenoise==6.7.0
+
+# Database (SQLite is bundled; add this for potential Postgres on Render)
+# psycopg2-binary==2.9.9
+
+# Other utility
+requests==2.32.3
